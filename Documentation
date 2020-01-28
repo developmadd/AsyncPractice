@@ -1,0 +1,8 @@
+Hilos:
+
+Es conveniente no utilizar el hilo principal(o de UI) para operaciones de larga duración para evitar los ANR(Application Not Responding).
+El principal propósito del hilo principal es ocuparse de la interfaz gráfica. En este proyecto se exploran un par de alternativas.
+- Thread: Es una clase de Java que permite crear un hilo y ejecutar código en este empleando un objeto Runnable. Si el hilo que
+  lo ha llamado es el principal, podemos volver a comunicarnos con el por medio de runOnUiThread().
+- AsyncTask: Es una clase de la cual podemos sobrecargar métodos que nos facilitan la comunicacion entre hilos desde la creación
+  del hilo, el progreso de la tarea en ejecución y la finalización de este.
