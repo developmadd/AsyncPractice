@@ -11,10 +11,15 @@ El principal propósito del hilo principal es ocuparse de la interfaz gráfica. 
 - Handler: Es una clase cuyos objetos sirven de puente de comunicacion entre hilos. Un objeto handler pertenece al hilo donde es creado
   y puede realizar acciones pertinentes a dicho hilo, por ejemplo, si es creado en el main thread, este handler puede realizar actualizaciones
   el UI. Sin embargo un objeto handler puede ser empleado incluso dentro de otros hilos para comunicarse con el hilo donde fue creado.
-  En este proyecto se utilizan dos implementaciones diferentes de Handler. En ambas el handler es creado en el hilo pricipal, despues
-  se crea un segundo hilo donde se ejecutará la tarea larga. En la primera implementacion cada vez que se requiere comunicacion con
-  el hilo principal se emplea el metodo post del handler ejecutando dentro la accion requerida(actualizacion de UI). En la segunda
-  implementación se emplean mensajes, cuando el objeto Handler es creado se sobrecarga el metodo handleMessage, la cual recibira un mensaje
-  desde un hilo que desee comunicarse con el Thread principal, en este metodo se ejecutan tareas de atualizacion de UI dependiendo del
-  mensaje. Despues dentro del hilo de tarea larga, cuando es requerida la comunicacion con el hilo principal se genera un mensaje y se
-  envia por medio del handler y su metodo sendMessage, el hilo principal recibe el mensaje y realiza la accion pertinente.
+  En este proyecto se utilizan tres implementaciones diferentes de Handler. En todas el handler es creado en el hilo pricipal, despues
+  se crea un segundo hilo donde se ejecutará la tarea larga.
+  - En la primera implementacion cada vez que se requiere comunicacion con el hilo principal se emplea el metodo post del handler ejecutando
+  dentro la accion requerida(actualizacion de UI).
+  - En la segunda implementación se emplean mensajes y un objeto Handler. Al crear este objeto se sobrecarga el metodo handleMessage, el
+  cual recibira un mensaje desde un hilo que desee comunicarse con el Thread principal, en este metodo se ejecutan tareas de atualizacion de
+  UI dependiendo del mensaje. Despues dentro del hilo de tarea larga, cuando es requerida la comunicacion con el hilo principal se genera
+  un mensaje y se envia por medio del handler y su metodo sendMessage, el hilo principal recibe el mensaje y realiza la accion pertinente.
+  - En la tercera implementación se utilizan mensajes y se crea una clase personalizada que extiende de Handler, la cual sobrecarga el metodo
+  handleMessage y administra el mensaje ejecutando la accion pertinente en el hilo principal(actualizacion de UI). Al igual que la segunda
+  implementacion un hilo de tarea larga es creado y ejecutado, y cada vez que requiere comunicacion con el main thread lo hace por medio del
+  objeto de la clase personalizada y el metodo sendMessage

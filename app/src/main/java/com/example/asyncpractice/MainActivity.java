@@ -21,11 +21,13 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBarAsyncTask;
     ProgressBar progressBarHandler;
     ProgressBar progressBarHandlerMessage;
+    ProgressBar progressBarHandlerMessageClass;
     Button buttonNotSync;
     Button buttonThread;
     Button buttonAsyncTask;
     Button buttonHandler;
     Button buttonHandlerMessage;
+    Button buttonHandlerMessageClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +39,14 @@ public class MainActivity extends AppCompatActivity {
         buttonAsyncTask = findViewById(R.id.BTN_AsyncTask);
         buttonHandler = findViewById(R.id.BTN_Handler);
         buttonHandlerMessage = findViewById(R.id.BTN_Handler_Message);
+        buttonHandlerMessageClass = findViewById(R.id.BTN_Handler_Message_Class);
 
         progressBarNotSync = findViewById(R.id.PB_Not_Sync);
         progressBarThread = findViewById(R.id.PB_Thread);
         progressBarAsyncTask = findViewById(R.id.PB_AsyncTask);
         progressBarHandler = findViewById(R.id.PB_Handler);
         progressBarHandlerMessage = findViewById(R.id.PB_Handler_Message);
+        progressBarHandlerMessageClass = findViewById(R.id.PB_Handler_Message_Class);
 
 
         buttonNotSync.setOnClickListener(new View.OnClickListener() {
@@ -210,7 +214,55 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         Bundle bundle = new Bundle();
-                        bundle.putString("message","Listo Handler Class");
+                        bundle.putString("message","Listo Handler Message");
+                        Message message = new Message();
+                        message.setData(bundle);
+                        handler.sendMessage(message);
+
+                    }
+                }).start();
+            }
+        });
+
+
+        buttonHandlerMessageClass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // This handler owns to main thread and execute instruction in the UI(Main thread)
+                // according to the messages received from long task thread
+                final ProgressHandler handler = new ProgressHandler();
+                handler.setProgressBehaviour(new ProgressHandler.ProgressBehaviour() {
+                    @Override
+                    public void setProgress(int progress) {
+                        progressBarHandlerMessageClass.setProgress(progress);
+                    }
+
+                    @Override
+                    public void onFinishProgress(String message) {
+                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                    }
+                });
+
+
+                // This new thread is going to execute a long task and use the main thread
+                // handler to communicate with UI via messages
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        for( int i = 1 ; i <= 10 ; i++){
+                            task();
+
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("value",i);
+                            Message message = new Message();
+                            message.setData(bundle);
+                            handler.sendMessage(message);
+                        }
+
+                        Bundle bundle = new Bundle();
+                        bundle.putString("message","Listo Handler Message Class");
                         Message message = new Message();
                         message.setData(bundle);
                         handler.sendMessage(message);
@@ -227,7 +279,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    void task()  {
+
+    void task() {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
