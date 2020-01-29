@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
@@ -21,12 +20,12 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBarThread;
     ProgressBar progressBarAsyncTask;
     ProgressBar progressBarHandler;
-    ProgressBar progressBarHandlerClass;
+    ProgressBar progressBarHandlerMessage;
     Button buttonNotSync;
     Button buttonThread;
     Button buttonAsyncTask;
     Button buttonHandler;
-    Button buttonHandlerClass;
+    Button buttonHandlerMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,19 +36,20 @@ public class MainActivity extends AppCompatActivity {
         buttonThread = findViewById(R.id.BTN_Thread);
         buttonAsyncTask = findViewById(R.id.BTN_AsyncTask);
         buttonHandler = findViewById(R.id.BTN_Handler);
-        buttonHandlerClass = findViewById(R.id.BTN_Handler_Class);
+        buttonHandlerMessage = findViewById(R.id.BTN_Handler_Message);
 
         progressBarNotSync = findViewById(R.id.PB_Not_Sync);
         progressBarThread = findViewById(R.id.PB_Thread);
         progressBarAsyncTask = findViewById(R.id.PB_AsyncTask);
         progressBarHandler = findViewById(R.id.PB_Handler);
-        progressBarHandlerClass = findViewById(R.id.PB_Handler_Class);
+        progressBarHandlerMessage = findViewById(R.id.PB_Handler_Message);
 
 
         buttonNotSync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 progressBarNotSync.setMax(60);
+                // This long task is going to block the main thread
                 for( int i = 0 ; i <= 60 ; i++){
                     task();
                     progressBarNotSync.setProgress(i);
@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 progressBarThread.setMax(10);
+                // This new thread is going to execute a long task and communicate with the
+                // UI via runOnUiThread
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -93,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
         buttonAsyncTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // This class extends from AsyncTask and executes a interface with the interest steps
+                // on the async task, this interface implementation allows to communicatie with the UI
                 final GenericAsyncTask genericAsyncTask = new GenericAsyncTask();
                 genericAsyncTask.setBehaviour(new GenericAsyncTask.GenericAsyncTaskInterface() {
                     @Override
@@ -138,11 +143,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                // This handler owns to main thread
                 final Handler handler = new Handler();
+
+                // This new thread is going to execute a long task and use the main thread
+                // handler to communicate with UI
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-
                         for( int i = 1 ; i <= 10 ; i++){
                             task();
                             final int finalI = i;
@@ -168,28 +176,44 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        buttonHandlerClass.setOnClickListener(new View.OnClickListener() {
+        buttonHandlerMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                // This handler owns to main thread and execute instruction in the UI(Main thread)
+                // according to the messages received from long task thread
                 final Handler handler = new Handler(){
                     @Override
                     public void handleMessage(@NonNull Message msg) {
-                        //if(msg)
-                        progressBarHandler.setProgress(msg.getData().getInt("value"));
-                        // else
-                        //oast.makeText(getApplicationContext(), "Listo Handler", Toast.LENGTH_LONG).show();
+                        if( msg.getData().getString("message") != null) {
+                            Toast.makeText(getApplicationContext(),msg.getData().getString("message") , Toast.LENGTH_LONG).show();
+                        } else {
+                            progressBarHandlerMessage.setProgress(msg.getData().getInt("value"));
+                        }
                     }
                 };
+
+                // This new thread is going to execute a long task and use the main thread
+                // handler to communicate with UI via messages
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
 
                         for( int i = 1 ; i <= 10 ; i++){
                             task();
-                            //handler.sendMessage(new Intent)
+
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("value",i);
+                            Message message = new Message();
+                            message.setData(bundle);
+                            handler.sendMessage(message);
                         }
 
+                        Bundle bundle = new Bundle();
+                        bundle.putString("message","Listo Handler Class");
+                        Message message = new Message();
+                        message.setData(bundle);
+                        handler.sendMessage(message);
 
                     }
                 }).start();

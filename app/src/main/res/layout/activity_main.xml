@@ -96,7 +96,7 @@
         android:layout_marginBottom="10dp"/>
 
     <ProgressBar
-        android:id="@+id/PB_Handler_Class"
+        android:id="@+id/PB_Handler_Message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -107,12 +107,11 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"/>
     <Button
-        android:id="@+id/BTN_Handler_Class"
+        android:id="@+id/BTN_Handler_Message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#00ffffff"
-        android:text="Handler class"
-        android:textAllCaps="false"
-        android:layout_marginBottom="10dp"/>
+        android:text="Handler message"
+        android:textAllCaps="false" />
 
 </LinearLayout>

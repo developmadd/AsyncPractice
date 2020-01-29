@@ -2,8 +2,19 @@ Hilos:
 
 Es conveniente no utilizar el hilo principal(o de UI) para operaciones de larga duración para evitar los ANR(Application Not Responding).
 El principal propósito del hilo principal es ocuparse de la interfaz gráfica. En este proyecto se exploran un par de alternativas.
-- Thread: Es una clase de Java que permite crear un hilo y ejecutar código en este empleando un objeto Runnable. Si el hilo que
-  lo ha llamado es el principal, podemos volver a comunicarnos con el por medio de runOnUiThread().
+- Thread: Es una clase que permite crear un hilo y ejecutar código en este empleando un objeto Runnable. Podemos volver a comunicarnos
+  con el hilo principal por medio de runOnUiThread().
 - AsyncTask: Es una clase de la cual podemos sobrecargar métodos que nos facilitan la comunicacion entre hilos desde la creación
-  del hilo, el progreso de la tarea en ejecución y la finalización de este.
-- Handler
+  del hilo, el progreso de la tarea en ejecución y la finalización de este. En este proyecto se creó una clase que hereda de AsyncTask,
+  y sobrecarga cada metodo(pre, run, update, post). Este objeto recibe una implementacion de interfaz como parametro, la cual establece
+  el comportamiento en cada uno de los metodos sobrecargados, dicho comportamiento se establece en la declaracion del objeto de esta clase.
+- Handler: Es una clase cuyos objetos sirven de puente de comunicacion entre hilos. Un objeto handler pertenece al hilo donde es creado
+  y puede realizar acciones pertinentes a dicho hilo, por ejemplo, si es creado en el main thread, este handler puede realizar actualizaciones
+  el UI. Sin embargo un objeto handler puede ser empleado incluso dentro de otros hilos para comunicarse con el hilo donde fue creado.
+  En este proyecto se utilizan dos implementaciones diferentes de Handler. En ambas el handler es creado en el hilo pricipal, despues
+  se crea un segundo hilo donde se ejecutará la tarea larga. En la primera implementacion cada vez que se requiere comunicacion con
+  el hilo principal se emplea el metodo post del handler ejecutando dentro la accion requerida(actualizacion de UI). En la segunda
+  implementación se emplean mensajes, cuando el objeto Handler es creado se sobrecarga el metodo handleMessage, la cual recibira un mensaje
+  desde un hilo que desee comunicarse con el Thread principal, en este metodo se ejecutan tareas de atualizacion de UI dependiendo del
+  mensaje. Despues dentro del hilo de tarea larga, cuando es requerida la comunicacion con el hilo principal se genera un mensaje y se
+  envia por medio del handler y su metodo sendMessage, el hilo principal recibe el mensaje y realiza la accion pertinente.
