@@ -25,7 +25,7 @@
         android:id="@+id/BTN_Not_Sync"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Not Sync"
+        android:text="Not Sync(will block main thread)"
         android:textAllCaps="false"
         android:background="#00ffffff"
         android:layout_marginBottom="10dp"/>
@@ -92,6 +92,26 @@
         android:layout_height="wrap_content"
         android:background="#00ffffff"
         android:text="Handler"
+        android:textAllCaps="false"
+        android:layout_marginBottom="10dp"/>
+
+    <ProgressBar
+        android:id="@+id/PB_Handler_Class"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:max="10"
+        android:progress="0"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:progressTint="@color/colorAccent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
+    <Button
+        android:id="@+id/BTN_Handler_Class"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#00ffffff"
+        android:text="Handler class"
         android:textAllCaps="false"
         android:layout_marginBottom="10dp"/>
 

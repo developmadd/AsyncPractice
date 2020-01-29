@@ -6,3 +6,4 @@ El principal propósito del hilo principal es ocuparse de la interfaz gráfica. 
   lo ha llamado es el principal, podemos volver a comunicarnos con el por medio de runOnUiThread().
 - AsyncTask: Es una clase de la cual podemos sobrecargar métodos que nos facilitan la comunicacion entre hilos desde la creación
   del hilo, el progreso de la tarea en ejecución y la finalización de este.
+- Handler
